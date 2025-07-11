@@ -53,7 +53,7 @@ jobs:
             target/*.jar
             target/*.war
           if-no-files-found: error
-  test:
-    - name: Run tests (if enabled)
-        if: ${{ github.event.inputs.run-tests == 'true' }}
-        run: mvn test
+   test:
+     - name: Run tests (if enabled)
+         if: ${{ github.event.inputs.run-tests == 'true' }}
+         run: mvn test
