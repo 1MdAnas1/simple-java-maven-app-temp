@@ -43,8 +43,6 @@ jobs:
       - name: Build with Maven (skip tests if chosen)
         run: mvn clean package -DskipTests=${{ github.event.inputs.run-tests == 'false' }}
 
-      
-
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -53,7 +51,29 @@ jobs:
             target/*.jar
             target/*.war
           if-no-files-found: error
-   test:
-     - name: Run tests (if enabled)
-         if: ${{ github.event.inputs.run-tests == 'true' }}
-         run: mvn test
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ github.event.inputs.run-tests == 'true' }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run tests
+        run: mvn test
