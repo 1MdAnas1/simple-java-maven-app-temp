@@ -43,9 +43,7 @@ jobs:
       - name: Build with Maven (skip tests if chosen)
         run: mvn clean package -DskipTests=${{ github.event.inputs.run-tests == 'false' }}
 
-      - name: Run tests (if enabled)
-        if: ${{ github.event.inputs.run-tests == 'true' }}
-        run: mvn test
+      
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -55,3 +53,7 @@ jobs:
             target/*.jar
             target/*.war
           if-no-files-found: error
+  test:
+    - name: Run tests (if enabled)
+        if: ${{ github.event.inputs.run-tests == 'true' }}
+        run: mvn test
